@@ -1,0 +1,37 @@
+# Model weights
+*.pth
+*.docx
+*.ipynb
+*.csv
+*.pt
+*.ckpt
+*.onnx
+*.bin
+*.safetensors
+
+# Model archives
+*.zip
+*.tar
+*.tar.gz
+
+# Incomplete downloads
+*.crdownload
+*.part
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large datasets
+dataset/
+datasets/
+data/
+
+# Environment / secrets
+.env

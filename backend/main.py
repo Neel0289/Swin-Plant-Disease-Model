@@ -1,0 +1,189 @@
+"""
+main.py — FastAPI Backend for Plant Disease Classifier
+
+A clean, easy-to-understand FastAPI backend that:
+1. Accepts uploaded plant leaf images.
+2. Runs inference using a trained Swin Transformer model.
+3. Returns top disease predictions with confidence scores, descriptions, and remedies.
+"""
+
+import os
+import uvicorn
+from typing import List, Optional
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+# Import model inference engine and metadata
+from model import predict, get_model, DEVICE, MODEL_PATH
+
+# Minimum confidence threshold (percentage) to consider a prediction reliable
+MIN_CONFIDENCE_PERCENT = 40.0
+
+# ------------------------------------------------------------------------------
+# 1. FastAPI App Initialization
+# ------------------------------------------------------------------------------
+app = FastAPI(
+    title="Plant Disease Classifier API",
+    description="Upload a plant leaf image to detect diseases and view actionable remedies.",
+    version="1.0.0",
+)
+
+# ------------------------------------------------------------------------------
+# 2. CORS (Cross-Origin Resource Sharing)
+#    Allows the frontend (React / Vite on localhost:5173 or localhost:3000)
+#    to communicate directly with this backend API.
+# ------------------------------------------------------------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],        # Allow all origins in local development
+    allow_credentials=True,
+    allow_methods=["*"],        # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],        # Allow all headers
+)
+
+# ------------------------------------------------------------------------------
+# 3. Pydantic Models (Schemas for API Responses)
+# ------------------------------------------------------------------------------
+class Prediction(BaseModel):
+    class_name: str
+    display_name: str
+    confidence: float
+    plant: str
+    severity: str
+    description: str
+    remedies: List[str]
+
+
+class PredictResponse(BaseModel):
+    success: bool
+    predictions: List[Prediction]
+    top_prediction: Optional[Prediction] = None
+    model_loaded: bool
+    message: Optional[str] = None
+
+
+class HealthResponse(BaseModel):
+    status: str
+    model_loaded: bool
+    model_path: str
+    device: str
+
+
+# ------------------------------------------------------------------------------
+# 4. Startup Event: Model Pre-loading
+# ------------------------------------------------------------------------------
+@app.on_event("startup")
+def startup_load_model():
+    """Load the neural network into memory when FastAPI starts."""
+    import traceback
+    try:
+        get_model()
+        print("[OK] Plant disease model loaded successfully into memory.")
+    except Exception as err:
+        # Print a large, unmissable banner so this failure can NEVER go
+        # unnoticed while the server keeps running.
+        banner = "\n" + "=" * 70 + "\n"
+        banner += "  !! FATAL: MODEL FAILED TO LOAD ON STARTUP — SERVER IS BROKEN !!\n"
+        banner += "=" * 70 + "\n"
+        banner += f"  Error type : {type(err).__name__}\n"
+        banner += f"  Error msg  : {err}\n"
+        banner += "-" * 70 + "\n"
+        banner += traceback.format_exc()
+        banner += "=" * 70
+        print(banner)
+        raise RuntimeError(
+            f"Model startup failure ({type(err).__name__}): {err}"
+        ) from err
+
+
+# ------------------------------------------------------------------------------
+# 5. API Routes
+# ------------------------------------------------------------------------------
+@app.get("/", tags=["General"])
+def root():
+    """Welcome endpoint with basic API info."""
+    return {
+        "message": "Plant Disease Classifier API is running.",
+        "docs": "/docs",
+        "predict_endpoint": "/predict",
+    }
+
+
+@app.get("/health", response_model=HealthResponse, tags=["General"])
+def health():
+    """Health check endpoint to inspect server and model status."""
+    model_loaded = False
+    try:
+        get_model()
+        model_loaded = True
+    except Exception:
+        pass
+
+    return HealthResponse(
+        status="ok",
+        model_loaded=model_loaded,
+        model_path=os.path.abspath(MODEL_PATH),
+        device=str(DEVICE),
+    )
+
+
+@app.post("/predict", response_model=PredictResponse, tags=["Prediction"])
+async def predict_disease(file: UploadFile = File(...)):
+    """
+    Accepts an uploaded image of a plant leaf, validates it, and runs Swin-S inference.
+    Returns the top-3 predictions with confidence scores and disease management remedies.
+    """
+    # Step 1: Validate file MIME type
+    allowed_types = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid file type '{file.content_type}'. Please upload a JPEG, PNG, or WebP image.",
+        )
+
+    # Step 2: Read image bytes
+    image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+    # Step 3: Enforce file size limit (10MB)
+    max_file_size = 10 * 1024 * 1024
+    if len(image_bytes) > max_file_size:
+        raise HTTPException(status_code=413, detail="File size exceeds the 10MB limit.")
+
+    # Step 4: Run inference through the model
+    try:
+        predictions = predict(image_bytes, top_k=3)
+    except FileNotFoundError as err:
+        raise HTTPException(status_code=503, detail=str(err))
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=f"Inference error: {err}")
+
+    # Step 5: Check if top prediction meets minimum confidence threshold
+    top_prediction = predictions[0] if predictions else None
+    if not top_prediction or top_prediction["confidence"] < MIN_CONFIDENCE_PERCENT:
+        return PredictResponse(
+            success=True,
+            predictions=[],
+            top_prediction=None,
+            model_loaded=True,
+            message=f"No reliable prediction: top confidence is below {MIN_CONFIDENCE_PERCENT:.0f}%",
+        )
+
+    # Step 6: Return formatted prediction results
+    return PredictResponse(
+        success=True,
+        predictions=predictions,
+        top_prediction=top_prediction,
+        model_loaded=True,
+        message=None,
+    )
+
+
+# ------------------------------------------------------------------------------
+# 6. Run Server
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
+    # Run server locally on port 8001
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
