@@ -79,6 +79,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* Gradient mesh background */
 body::before {
   content: '';
@@ -294,12 +299,14 @@ body::before {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(10px);
+  text-decoration: none;
 }
 
 .btn-ghost:hover {
   background: var(--glass-bg-hover);
   border-color: var(--glass-border-strong);
   transform: translateY(-2px);
+  text-decoration: none;
 }
 
 /* ── Severity Badges ────────────────────────────────────────────────────────── */

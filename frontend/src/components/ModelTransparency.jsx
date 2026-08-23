@@ -6,6 +6,7 @@ import TrainingCurvesChart from './TrainingCurvesChart.jsx';
 import MetricsComparisonChart from './MetricsComparisonChart.jsx';
 import ConfusionMatrixHeatmap from './ConfusionMatrixHeatmap.jsx';
 import PerClassMetricsTable from './PerClassMetricsTable.jsx';
+import TrainingConfigDetails from './TrainingConfigDetails.jsx';
 
 export default function ModelTransparency() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -13,6 +14,7 @@ export default function ModelTransparency() {
   const tabs = [
     { id: 'overview', label: '📊 Overview & Benchmarks' },
     { id: 'architecture', label: '🧠 Swin-S Architecture' },
+    { id: 'training-config', label: '⚙️ Training Configuration' },
     { id: 'curves', label: '📈 Training Curves' },
     { id: 'classes', label: '🎯 23-Class Diagnostics' },
     { id: 'matrix', label: '🧩 Confusion Matrix' },
@@ -87,6 +89,12 @@ export default function ModelTransparency() {
         <div className="animate-fade-in">
           <ArchitectureDiagram />
           <MetricsComparisonChart />
+        </div>
+      )}
+
+      {activeTab === 'training-config' && (
+        <div className="animate-fade-in">
+          <TrainingConfigDetails />
         </div>
       )}
 

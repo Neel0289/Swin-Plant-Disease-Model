@@ -5,57 +5,6 @@ import ParticleBackground from './components/ParticleBackground.jsx';
 // ── Constants ──────────────────────────────────────────────────────────────────
 const API_BASE = '/api';
 
-const FEATURES = [
-  {
-    icon: '🧠',
-    title: 'Deep Learning AI',
-    desc: 'Powered by a fine-tuned Swin Transformer trained across 23 plant disease classes.',
-  },
-  {
-    icon: '⚡',
-    title: 'Instant Results',
-    desc: 'Get diagnosis in under a second. Real-time inference with GPU-accelerated PyTorch backend.',
-  },
-  {
-    icon: '🌿',
-    title: '23 Disease Classes',
-    desc: 'Covers 10 crop species and common diseases from Apple Rust to Tomato Mosaic Virus.',
-  },
-  {
-    icon: '💊',
-    title: 'Treatment Guidance',
-    desc: 'Actionable remedies and severity ratings for every detected disease, right at your fingertips.',
-  },
-  {
-    icon: '📊',
-    title: 'Top-3 Predictions',
-    desc: 'See confidence scores for all top predictions — not just one guess but a full probability breakdown.',
-  },
-  {
-    icon: '🔒',
-    title: 'Privacy First',
-    desc: 'Images are never stored. Analysis runs on-device and results are returned immediately.',
-  },
-];
-
-const HOW_IT_WORKS = [
-  {
-    step: '01',
-    title: 'Upload a Leaf Photo',
-    desc: 'Take a clear photo of the affected leaf and drag & drop or click to upload. JPEG, PNG, WebP supported.',
-  },
-  {
-    step: '02',
-    title: 'AI Analyses the Image',
-    desc: 'Our deep learning model pre-processes and passes the image through a multi-layer convolutional network.',
-  },
-  {
-    step: '03',
-    title: 'Get Your Diagnosis',
-    desc: 'Within seconds, receive a detailed report with disease name, severity, description, and treatment steps.',
-  },
-];
-
 // ── Severity color helper ──────────────────────────────────────────────────────
 function getSeverityClass(severity) {
   switch (severity?.toLowerCase()) {
@@ -432,13 +381,16 @@ function HeroSection({ onScanClick }) {
 
         <div
           className="animate-slide-up delay-300"
-          style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}
+          style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}
         >
+          <a href="#diseases" className="btn-ghost">
+            Diseases
+          </a>
           <button className="btn-primary" onClick={onScanClick} id="hero-scan-btn">
             Scan a Leaf Now
           </button>
-          <a href="#how-it-works" className="btn-ghost">
-            How It Works
+          <a href="#behind-the-ai" className="btn-ghost">
+            Behind the AI
           </a>
         </div>
 
@@ -539,98 +491,6 @@ function ScanSection({ scanRef }) {
         )}
 
         {results && <ResultsPanel results={results} onReset={handleReset} />}
-      </div>
-    </section>
-  );
-}
-
-// ── Features Section ───────────────────────────────────────────────────────────
-function FeaturesSection() {
-  return (
-    <section style={{ padding: '80px 24px', position: 'relative' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div className="text-label" style={{ marginBottom: 12 }}>Why PhytoScan</div>
-          <h2 className="text-headline">Built for Accuracy</h2>
-          <div className="divider" style={{ margin: '16px auto' }} />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
-          {FEATURES.map((feat) => (
-            <div key={feat.title} className="glass-card" style={{ padding: '32px 28px' }}>
-              <div style={{
-                width: 56, height: 56,
-                borderRadius: 'var(--radius-md)',
-                background: 'rgba(16,185,129,0.1)',
-                border: '1px solid var(--glass-border)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.8rem', marginBottom: 20,
-              }}>
-                {feat.icon}
-              </div>
-              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: 10 }}>
-                {feat.title}
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.65 }}>
-                {feat.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ── How It Works ───────────────────────────────────────────────────────────────
-function HowItWorksSection() {
-  return (
-    <section id="how-it-works" style={{ padding: '80px 24px', position: 'relative' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <div className="text-label" style={{ marginBottom: 12 }}>Simple Process</div>
-          <h2 className="text-headline">How It Works</h2>
-          <div className="divider" style={{ margin: '16px auto' }} />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0, position: 'relative' }}>
-          <div style={{
-            position: 'absolute', left: 35, top: 56, bottom: 56,
-            width: 2,
-            background: 'linear-gradient(to bottom, var(--accent), transparent)',
-            zIndex: 0,
-          }} />
-          {HOW_IT_WORKS.map((step) => (
-            <div key={step.step} style={{
-              display: 'flex', gap: 28, alignItems: 'flex-start',
-              padding: '28px 0', position: 'relative', zIndex: 1,
-            }}>
-              <div style={{
-                flexShrink: 0, width: 70, height: 70,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.1))',
-                border: '2px solid var(--glass-border-strong)',
-                backdropFilter: 'blur(10px)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexDirection: 'column',
-                boxShadow: '0 0 30px rgba(16,185,129,0.15)',
-              }}>
-                <span style={{ fontSize: '0.65rem', color: 'var(--accent)', fontWeight: 700, letterSpacing: '0.1em' }}>
-                  STEP
-                </span>
-                <span style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--green-300)', lineHeight: 1 }}>
-                  {step.step}
-                </span>
-              </div>
-              <div style={{ paddingTop: 12 }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
-                  {step.title}
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.65, maxWidth: 580 }}>
-                  {step.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
@@ -742,8 +602,6 @@ export default function App() {
       <main>
         <HeroSection onScanClick={scrollToScan} />
         <ScanSection scanRef={scanRef} />
-        <FeaturesSection />
-        <HowItWorksSection />
         <ModelTransparency />
         <DiseasesCTA onScanClick={scrollToScan} />
       </main>

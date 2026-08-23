@@ -83,7 +83,7 @@ export default function Navbar({ onScanClick }) {
 
       {/* Nav links — desktop */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }} className="nav-links">
-        {['Features', 'How It Works', 'Behind the AI', 'Diseases'].map(item => (
+        {['Behind the AI', 'Diseases'].map(item => (
           <a
             key={item}
             href={`#${item.toLowerCase().replace(/ /g, '-')}`}

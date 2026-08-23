@@ -18,7 +18,7 @@ from class_names import CLASS_NAMES, get_disease_info
 # Points to the 23-class checkpoint used by the current model.
 MODEL_PATH = os.environ.get(
     "MODEL_PATH",
-    os.path.join(os.path.dirname(__file__), "..", "..", "best_swin_s_vast.pth")
+    os.path.join(os.path.dirname(__file__), "..", "swin_model", "1.pth")
 )
 NUM_CLASSES = len(CLASS_NAMES)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -47,7 +47,7 @@ def _build_model() -> nn.Module:
     if not os.path.exists(model_path):
         raise FileNotFoundError(
             f"Model not found at '{model_path}'. "
-            "Ensure the 'swin_model' folder is present at Interface/swin_model/."
+            "Place the checkpoint at Interface/swin_model/1.pth and restart the server."
         )
 
     print(f"Loading checkpoint from: {model_path}")
@@ -189,7 +189,14 @@ def predict(image_bytes: bytes, top_k: int = 3) -> List[dict]:
     Returns top-k predictions sorted by confidence descending.
     Each entry: {class_name, display_name, confidence, plant, severity, description, remedies}
     """
-    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    if not image_bytes:
+        raise ValueError("Uploaded file is empty.")
+
+    try:
+        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    except Exception as err:
+        raise ValueError(f"Invalid image file: {err}") from err
+
     tensor = TRANSFORM(image).unsqueeze(0).to(DEVICE)
 
     model = get_model()

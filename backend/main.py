@@ -155,10 +155,12 @@ async def predict_disease(file: UploadFile = File(...)):
     # Step 4: Run inference through the model
     try:
         predictions = predict(image_bytes, top_k=3)
+    except ValueError as err:
+        raise HTTPException(status_code=400, detail=str(err)) from err
     except FileNotFoundError as err:
-        raise HTTPException(status_code=503, detail=str(err))
+        raise HTTPException(status_code=503, detail=str(err)) from err
     except Exception as err:
-        raise HTTPException(status_code=500, detail=f"Inference error: {err}")
+        raise HTTPException(status_code=500, detail=f"Inference error: {err}") from err
 
     # Step 5: Check if top prediction meets minimum confidence threshold
     top_prediction = predictions[0] if predictions else None
