@@ -307,7 +307,7 @@ Swin-Plant-Disease-Model/
 
 ## 🤝 Acknowledgments & References
 
-* **Smart India Hackathon (SIH 2026)** for motivating technology-driven solutions for agricultural sustainability.
+
 * **Microsoft Research** for the foundational paper: *[Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/abs/2103.14030)*.
 * **PyTorch & Torchvision Teams** for state-of-the-art vision transformer implementations.
 * **International Integrated Pest Management (IPM)** standards for agronomic foliar disease remedies.
