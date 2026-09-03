@@ -21,35 +21,59 @@ export default function ModelTransparency() {
   ];
 
   return (
-    <section id="behind-the-ai" className="rk-section-shell" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-      {/* Chapter Stage Header */}
-      <div className="rk-stage-header">
-        <div className="rk-stage-index">
-          <span className="rk-index-num">05</span>
-          <span className="rk-index-bar" />
-          <span className="rk-index-tag">NEURAL BENCHMARKS & MODEL TRANSPARENCY</span>
-        </div>
+    <section id="behind-the-ai" className="section container">
+      {/* Top Banner Tag */}
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <span className="text-label" style={{
+          padding: '6px 18px',
+          borderRadius: '999px',
+          background: 'rgba(16,185,129,0.12)',
+          border: '1px solid rgba(16,185,129,0.25)',
+        }}>
+          Model Transparency & Scientific Proof
+        </span>
       </div>
 
       {/* Main Hero Header */}
       <ModelHero />
 
       {/* Section Sub-Navigation Tabs */}
-      <div className="rk-transparency-tabs-wrapper">
-        <div className="rk-transparency-tabs-shell">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`rk-transparency-tab-pill ${isActive ? 'is-active' : ''}`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px',
+        marginBottom: '40px',
+        flexWrap: 'wrap',
+        background: 'rgba(4,13,7,0.8)',
+        padding: '8px',
+        borderRadius: '999px',
+        border: '1px solid var(--glass-border-strong)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
+      }}>
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                padding: '10px 22px',
+                borderRadius: '999px',
+                border: 'none',
+                background: isActive ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'transparent',
+                color: isActive ? '#ffffff' : 'var(--text-secondary)',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: isActive ? '0 4px 20px rgba(16,185,129,0.4)' : 'none',
+              }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Dynamic Tab Content View */}

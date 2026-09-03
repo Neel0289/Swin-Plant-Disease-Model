@@ -61,6 +61,8 @@ class PredictResponse(BaseModel):
     top_prediction: Optional[Prediction] = None
     model_loaded: bool
     message: Optional[str] = None
+    model_checkpoint: Optional[str] = "swin_model/1.pth"
+    model_arch: Optional[str] = "Swin Transformer-S (23 classes)"
 
 
 class HealthResponse(BaseModel):
@@ -98,32 +100,21 @@ def startup_load_model():
 
 
 # ------------------------------------------------------------------------------
-# 5. API Routes
+# 5. API Endpoints
 # ------------------------------------------------------------------------------
-@app.get("/", tags=["General"])
-def root():
-    """Welcome endpoint with basic API info."""
-    return {
-        "message": "Plant Disease Classifier API is running.",
-        "docs": "/docs",
-        "predict_endpoint": "/predict",
-    }
-
-
-@app.get("/health", response_model=HealthResponse, tags=["General"])
-def health():
-    """Health check endpoint to inspect server and model status."""
-    model_loaded = False
+@app.get("/health", response_model=HealthResponse, tags=["Health"])
+def health_check():
+    """Check API server and Swin Transformer model health."""
     try:
-        get_model()
-        model_loaded = True
+        model = get_model()
+        is_loaded = model is not None
     except Exception:
-        pass
+        is_loaded = False
 
     return HealthResponse(
-        status="ok",
-        model_loaded=model_loaded,
-        model_path=os.path.abspath(MODEL_PATH),
+        status="ok" if is_loaded else "model_not_ready",
+        model_loaded=is_loaded,
+        model_path=MODEL_PATH,
         device=str(DEVICE),
     )
 
@@ -134,25 +125,17 @@ async def predict_disease(file: UploadFile = File(...)):
     Accepts an uploaded image of a plant leaf, validates it, and runs Swin-S inference.
     Returns the top-3 predictions with confidence scores and disease management remedies.
     """
-    # Step 1: Validate file MIME type
-    allowed_types = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
-    if file.content_type not in allowed_types:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid file type '{file.content_type}'. Please upload a JPEG, PNG, or WebP image.",
-        )
-
-    # Step 2: Read image bytes
+    # Step 1: Read image bytes
     image_bytes = await file.read()
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-    # Step 3: Enforce file size limit (10MB)
+    # Step 2: Enforce file size limit (10MB)
     max_file_size = 10 * 1024 * 1024
     if len(image_bytes) > max_file_size:
         raise HTTPException(status_code=413, detail="File size exceeds the 10MB limit.")
 
-    # Step 4: Run inference through the model
+    # Step 3: Run inference through the real Swin-S model from 1.pth
     try:
         predictions = predict(image_bytes, top_k=3)
     except ValueError as err:
@@ -162,8 +145,12 @@ async def predict_disease(file: UploadFile = File(...)):
     except Exception as err:
         raise HTTPException(status_code=500, detail=f"Inference error: {err}") from err
 
-    # Step 5: Check if top prediction meets minimum confidence threshold
+    MIN_CONFIDENCE_PERCENT = 40.0
     top_prediction = predictions[0] if predictions else None
+
+    # Step 4: Non-foliar / Out-of-Distribution specimen safeguard
+    # If highest probability is below 40%, the photo is likely not a supported crop leaf
+    # (e.g. notebook page, document, handwriting, or non-plant object).
     if not top_prediction or top_prediction["confidence"] < MIN_CONFIDENCE_PERCENT:
         return PredictResponse(
             success=True,
@@ -171,15 +158,19 @@ async def predict_disease(file: UploadFile = File(...)):
             top_prediction=None,
             model_loaded=True,
             message=f"No reliable prediction: top confidence is below {MIN_CONFIDENCE_PERCENT:.0f}%",
+            model_checkpoint=os.path.basename(MODEL_PATH),
+            model_arch="Swin Transformer-S (23 Classes)",
         )
 
-    # Step 6: Return formatted prediction results
+    # Step 5: Return confident Swin-S prediction results
     return PredictResponse(
         success=True,
         predictions=predictions,
         top_prediction=top_prediction,
         model_loaded=True,
         message=None,
+        model_checkpoint=os.path.basename(MODEL_PATH),
+        model_arch="Swin Transformer-S (23 Classes)",
     )
 
 

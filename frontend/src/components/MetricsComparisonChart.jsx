@@ -26,10 +26,10 @@ export default function MetricsComparisonChart() {
   return (
     <div className="glass-card" style={{ padding: '28px', marginBottom: '40px' }}>
       <div style={{ marginBottom: '20px' }}>
-        <div style={{ fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.08em' }}>
+        <div style={{ fontSize: '0.75rem', color: 'var(--emerald)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.08em' }}>
           Aggregate Benchmark Comparison
         </div>
-        <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+        <h3 className="rk-benchmark-title" style={{ fontSize: '1.4rem', marginBottom: '4px' }}>
           Macro vs. Weighted Evaluation Metrics
         </h3>
         <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -59,14 +59,14 @@ export default function MetricsComparisonChart() {
             <div style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '4px' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Macro Average (Unweighted):</span>
-                <strong style={{ color: '#34d399' }}>{item.macro.toFixed(2)}%</strong>
+                <strong style={{ color: 'var(--emerald)' }}>{item.macro.toFixed(2)}%</strong>
               </div>
               <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '999px', overflow: 'hidden' }}>
                 <div
                   style={{
                     height: '100%',
                     width: `${item.macro}%`,
-                    background: 'linear-gradient(90deg, #10b981, #34d399)',
+                    background: 'linear-gradient(90deg, var(--emerald), var(--clay-lift, #34d399))',
                     borderRadius: '999px',
                     transition: 'width 1s ease'
                   }}

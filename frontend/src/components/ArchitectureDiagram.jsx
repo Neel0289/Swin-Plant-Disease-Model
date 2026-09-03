@@ -38,14 +38,22 @@ export default function ArchitectureDiagram() {
     <div className="glass-card" style={{ padding: '28px', marginBottom: '40px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.08em' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--emerald)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.08em' }}>
             Neural Network Pipeline
           </div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+          <h3 className="rk-benchmark-title" style={{ fontSize: '1.4rem', marginBottom: '4px' }}>
             Swin Transformer-S Hierarchical Flow
           </h3>
         </div>
-        <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', background: 'rgba(16,185,129,0.1)', padding: '6px 14px', borderRadius: '999px', border: '1px solid rgba(16,185,129,0.2)' }}>
+        <div style={{
+          fontSize: '0.82rem',
+          color: 'var(--emerald)',
+          background: 'var(--tag-bg)',
+          padding: '6px 14px',
+          borderRadius: '999px',
+          border: '1px solid var(--tag-border)',
+          transition: 'all 0.3s ease',
+        }}>
           Click a stage to inspect architecture details
         </div>
       </div>
@@ -66,8 +74,8 @@ export default function ArchitectureDiagram() {
               style={{
                 padding: '16px',
                 borderRadius: 'var(--radius-md)',
-                background: isActive ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.03)',
-                border: `1.5px solid ${isActive ? 'var(--accent)' : 'rgba(255,255,255,0.08)'}`,
+                background: isActive ? 'var(--tag-bg)' : 'rgba(255,255,255,0.03)',
+                border: `1.5px solid ${isActive ? 'var(--emerald)' : 'rgba(255,255,255,0.08)'}`,
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 position: 'relative',
@@ -77,12 +85,14 @@ export default function ArchitectureDiagram() {
                 display: 'inline-block',
                 fontSize: '0.68rem',
                 fontWeight: 700,
-                color: isActive ? '#10b981' : 'var(--text-muted)',
-                background: isActive ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.05)',
+                color: isActive ? 'var(--emerald)' : 'var(--text-muted)',
+                background: isActive ? 'var(--tag-bg)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${isActive ? 'var(--tag-border)' : 'transparent'}`,
                 padding: '2px 8px',
                 borderRadius: '4px',
                 marginBottom: '8px',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                transition: 'all 0.3s ease',
               }}>
                 {stage.badge}
               </div>
@@ -103,8 +113,8 @@ export default function ArchitectureDiagram() {
       <div style={{
         padding: '20px',
         borderRadius: 'var(--radius-md)',
-        background: 'rgba(4,13,7,0.6)',
-        border: '1px solid var(--glass-border-strong)',
+        background: 'rgba(18,24,21,0.92)',
+        border: '1px solid var(--soil-border, rgba(255,255,255,0.1))',
         display: 'flex',
         alignItems: 'flex-start',
         gap: '16px',
@@ -113,11 +123,12 @@ export default function ArchitectureDiagram() {
           fontSize: '2rem',
           padding: '12px',
           borderRadius: '12px',
-          background: 'rgba(16,185,129,0.15)',
-          border: '1px solid rgba(16,185,129,0.3)',
+          background: 'var(--tag-bg)',
+          border: '1px solid var(--tag-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          transition: 'all 0.3s ease',
         }}>
           {activeStage === 0 ? '🖼️' : activeStage === 1 ? '🔲' : activeStage === 2 ? '⚡' : '🧠'}
         </div>
@@ -127,7 +138,7 @@ export default function ArchitectureDiagram() {
             <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f0fdf4' }}>
               {stages[activeStage].title}
             </span>
-            <span style={{ fontSize: '0.8rem', color: 'var(--accent)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--emerald)', fontWeight: 600 }}>
               [{stages[activeStage].subtitle}]
             </span>
           </div>

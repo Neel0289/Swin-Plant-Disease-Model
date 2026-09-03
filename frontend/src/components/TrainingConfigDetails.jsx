@@ -2,32 +2,9 @@ import React, { useState } from 'react';
 
 /* ─── Shared row component ───────────────────────────────────────────────── */
 const Row = ({ label, value, mono = false }) => (
-  <div style={{
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '12px',
-    padding: '10px 0',
-    borderBottom: '1px solid rgba(255,255,255,0.05)',
-  }}>
-    <span style={{
-      flex: '0 0 auto',
-      width: '230px',
-      fontSize: '0.8rem',
-      fontWeight: 600,
-      color: 'var(--text-secondary)',
-      lineHeight: 1.5,
-    }}>
-      {label}
-    </span>
-    <span style={{
-      flex: 1,
-      fontSize: mono ? '0.8rem' : '0.85rem',
-      fontWeight: 500,
-      color: '#f0fdf4',
-      fontFamily: mono ? "'Fira Mono', 'Consolas', monospace" : 'inherit',
-      lineHeight: 1.5,
-      wordBreak: 'break-word',
-    }}>
+  <div className="rk-config-row">
+    <span className="rk-config-row-label">{label}</span>
+    <span className={`rk-config-row-value ${mono ? 'is-mono' : ''}`}>
       {value}
     </span>
   </div>
@@ -76,44 +53,21 @@ export default function TrainingConfigDetails() {
   const Section = ({ id, emoji, title, sub, children }) => {
     const isCollapsed = collapsed[id];
     return (
-      <div className="glass-card" style={{ padding: '24px', marginBottom: '20px' }}>
+      <div className="rk-config-section-card">
         <button
           onClick={() => toggle(id)}
-          style={{
-            all: 'unset',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-            marginBottom: isCollapsed ? 0 : '16px',
-          }}
+          className="rk-config-section-toggle"
         >
-          <div>
-            <div style={{
-              fontSize: '0.72rem',
-              color: 'var(--accent)',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              letterSpacing: '0.09em',
-              marginBottom: '2px',
-            }}>
-              {emoji} {title}
+          <div className="rk-config-section-header">
+            <div className="rk-config-section-icon">{emoji}</div>
+            <div>
+              <div className="rk-config-section-title">{title}</div>
+              {sub && <p className="rk-config-section-sub">{sub}</p>}
             </div>
-            {sub && (
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0 }}>{sub}</p>
-            )}
           </div>
-          <span style={{
-            fontSize: '1rem',
-            color: 'var(--text-secondary)',
-            transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
-            transition: 'transform 0.25s ease',
-            marginLeft: '12px',
-            flexShrink: 0,
-          }}>▾</span>
+          <span className={`rk-config-chevron ${isCollapsed ? 'is-collapsed' : ''}`}>▾</span>
         </button>
-        {!isCollapsed && <div>{children}</div>}
+        {!isCollapsed && <div className="rk-config-section-body">{children}</div>}
       </div>
     );
   };
@@ -131,67 +85,36 @@ export default function TrainingConfigDetails() {
         gap: '12px',
       }}>
         <div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
+          <h3 className="rk-benchmark-title" style={{ fontSize: '1.4rem', marginBottom: '4px' }}>
             Training Configuration &amp; Experiment Setup
           </h3>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>
+          <p className="rk-benchmark-subtitle">
             Every verified hyperparameter, dataset statistic, and hardware detail used to train PhytoScan's Swin-S backbone.
           </p>
         </div>
-        <div style={{
-          fontSize: '0.82rem',
-          color: 'var(--text-secondary)',
-          background: 'rgba(16,185,129,0.1)',
-          padding: '6px 14px',
-          borderRadius: '999px',
-          border: '1px solid rgba(16,185,129,0.2)',
-          whiteSpace: 'nowrap',
-        }}>
-          ✅ Values verified from training logs
+        <div className="rk-transparency-tag" style={{ margin: 0 }}>
+          <span>✅ Values verified from training logs</span>
         </div>
       </div>
 
       {/* Outcome hero cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px',
-      }}>
+      <div className="rk-benchmark-grid" style={{ marginBottom: '32px' }}>
         {outcomeCards.map((card, idx) => (
-          <div
-            key={idx}
-            className="glass-card"
-            style={{ padding: '20px', position: 'relative', overflow: 'hidden' }}
-          >
+          <div key={idx} className="rk-benchmark-stat-card">
             {/* ambient glow */}
-            <div style={{
-              position: 'absolute', top: '-20px', right: '-20px',
-              width: '80px', height: '80px', borderRadius: '50%',
-              background: card.accent, opacity: 0.15, filter: 'blur(20px)',
-              pointerEvents: 'none',
-            }} />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '1.4rem' }}>{card.icon}</span>
-              <span style={{
-                fontSize: '0.68rem', fontWeight: 700, padding: '3px 8px', borderRadius: '999px',
-                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-                color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em',
-              }}>Test Set</span>
+            <div
+              className="rk-benchmark-glow"
+              style={{ background: card.accent }}
+            />
+            <div>
+              <div className="rk-benchmark-card-top">
+                <span className="rk-benchmark-icon">{card.icon}</span>
+                <span className="rk-benchmark-badge">Test Set</span>
+              </div>
+              <div className="rk-benchmark-val">{card.value}</div>
+              <div className="rk-benchmark-name">{card.label}</div>
             </div>
-            <div style={{
-              fontSize: '2.2rem', fontWeight: 900, letterSpacing: '-0.03em',
-              lineHeight: 1.1, marginBottom: '4px', color: '#ffffff',
-              textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-            }}>
-              {card.value}
-            </div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
-              {card.label}
-            </div>
-            <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-              {card.sub}
-            </div>
+            <div className="rk-benchmark-subtext">{card.sub}</div>
           </div>
         ))}
       </div>
@@ -219,31 +142,20 @@ export default function TrainingConfigDetails() {
 
       {/* ── Section 3: Data Split ── */}
       <Section id="split" emoji="✂️" title="Data Split" sub="Stratified split · random_state=42">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: '14px',
-          paddingTop: '4px',
-        }}>
+        <div className="rk-config-split-grid">
           {[
             { label: 'Train', value: '84,018', pct: '80.00%', color: '#10b981' },
             { label: 'Validation', value: '10,502', pct: '10.00%', color: '#3b82f6' },
             { label: 'Test', value: '10,503', pct: '10.00%', color: '#8b5cf6' },
           ].map(s => (
-            <div key={s.label} style={{
-              padding: '16px',
-              borderRadius: 'var(--radius-md)',
-              background: 'rgba(255,255,255,0.04)',
-              border: `1.5px solid ${s.color}40`,
-              textAlign: 'center',
-            }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: s.color, lineHeight: 1.1 }}>
+            <div key={s.label} className="rk-config-split-card" style={{ borderColor: `${s.color}50` }}>
+              <div className="rk-config-split-val" style={{ color: s.color }}>
                 {s.value}
               </div>
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f0fdf4', marginTop: '4px' }}>
+              <div className="rk-config-split-label">
                 {s.label}
               </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              <div className="rk-config-split-pct">
                 {s.pct} of total
               </div>
             </div>
@@ -284,22 +196,19 @@ export default function TrainingConfigDetails() {
         <Row label="Best checkpoint saved at" value="Epoch 10 · Val loss 0.6645 · Val accuracy 98.17%" />
 
         <div style={{
-          marginTop: '20px',
-          marginBottom: '10px',
-          fontSize: '0.75rem',
-          fontWeight: 700,
-          color: 'var(--accent)',
+          marginTop: '24px',
+          marginBottom: '14px',
+          fontSize: '0.78rem',
+          fontWeight: 800,
+          color: 'var(--emerald)',
+          fontFamily: 'var(--font-mono)',
           textTransform: 'uppercase',
-          letterSpacing: '0.08em',
+          letterSpacing: '0.1em',
         }}>
           Final test-set results — held-out 10,503-image split, never seen during training
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
-          gap: '10px',
-        }}>
+        <div className="rk-config-outcome-grid">
           {[
             { label: 'Test Accuracy', value: '98.02%' },
             { label: 'Top-5 Accuracy', value: '99.70%' },
@@ -314,27 +223,11 @@ export default function TrainingConfigDetails() {
             { label: 'Matthews CC (MCC)', value: '0.9790' },
             { label: "Cohen's Kappa", value: '0.9790' },
           ].map((m, i) => (
-            <div key={i} style={{
-              padding: '12px 16px',
-              borderRadius: 'var(--radius-md)',
-              background: 'rgba(16,185,129,0.06)',
-              border: '1px solid rgba(16,185,129,0.18)',
-            }}>
-              <div style={{
-                fontSize: '1.25rem',
-                fontWeight: 800,
-                color: '#f0fdf4',
-                lineHeight: 1.1,
-                fontVariantNumeric: 'tabular-nums',
-              }}>
+            <div key={i} className="rk-config-outcome-pill">
+              <div className="rk-config-outcome-val">
                 {m.value}
               </div>
-              <div style={{
-                fontSize: '0.76rem',
-                color: 'var(--text-secondary)',
-                marginTop: '4px',
-                fontWeight: 500,
-              }}>
+              <div className="rk-config-outcome-label">
                 {m.label}
               </div>
             </div>

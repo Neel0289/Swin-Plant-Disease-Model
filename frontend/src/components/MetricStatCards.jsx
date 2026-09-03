@@ -54,95 +54,36 @@ export default function MetricStatCards() {
   ];
 
   return (
-    <div style={{ marginBottom: '40px' }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '20px',
-        flexWrap: 'wrap',
-        gap: '12px'
-      }}>
-        <div>
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-            Benchmark Highlights (Held-Out Test Set)
-          </h3>
-          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-            Evaluated on 10,503 unobserved test images across 23 plant disease categories
-          </p>
-        </div>
+    <div className="rk-benchmark-section">
+      <div className="rk-benchmark-header">
+        <h3 className="rk-benchmark-title">
+          Benchmark Highlights (Held-Out Test Set)
+        </h3>
+        <p className="rk-benchmark-subtitle">
+          Evaluated on 10,503 unobserved test images across 23 plant disease categories
+        </p>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '16px',
-      }}>
+      <div className="rk-benchmark-grid">
         {cards.map((card, idx) => (
-          <div
-            key={idx}
-            className="glass-card"
-            style={{
-              padding: '20px',
-              position: 'relative',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-            }}
-          >
-            {/* Ambient top right glow */}
-            <div style={{
-              position: 'absolute',
-              top: '-20px',
-              right: '-20px',
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              background: card.accent,
-              opacity: 0.15,
-              filter: 'blur(20px)',
-              pointerEvents: 'none'
-            }} />
+          <div key={idx} className="rk-benchmark-stat-card">
+            {/* Ambient top right soft glow */}
+            <div
+              className="rk-benchmark-glow"
+              style={{ background: card.accent }}
+            />
 
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span style={{ fontSize: '1.4rem' }}>{card.icon}</span>
-                <span style={{
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  padding: '3px 8px',
-                  borderRadius: '999px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: 'var(--text-secondary)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
-                }}>
-                  {card.badge}
-                </span>
+              <div className="rk-benchmark-card-top">
+                <span className="rk-benchmark-icon">{card.icon}</span>
+                <span className="rk-benchmark-badge">{card.badge}</span>
               </div>
 
-              <div style={{
-                fontSize: '2.2rem',
-                fontWeight: 900,
-                letterSpacing: '-0.03em',
-                lineHeight: 1.1,
-                marginBottom: '4px',
-                color: '#ffffff',
-                textShadow: '0 2px 10px rgba(0,0,0,0.5)',
-              }}>
-                {card.value}
-              </div>
-
-              <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
-                {card.label}
-              </div>
+              <div className="rk-benchmark-val">{card.value}</div>
+              <div className="rk-benchmark-name">{card.label}</div>
             </div>
 
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4, marginTop: '8px' }}>
-              {card.sub}
-            </div>
+            <div className="rk-benchmark-subtext">{card.sub}</div>
           </div>
         ))}
       </div>
